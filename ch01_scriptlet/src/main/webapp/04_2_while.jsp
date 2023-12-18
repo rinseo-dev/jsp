@@ -12,7 +12,7 @@
 		String msg = request.getParameter("msg"); // name="msg"에 입력된 값을 가져옴
 		int count = Integer.parseInt(request.getParameter("count"));
 		// name="count"에서 넘어온 값을 넣어줌
-		// count가 ""에 감싸져서 String형태로 넘어오기 때문에'
+		// count가 ""에 감싸져서 String형태로 넘어오기 때문에
 		// Integer.parseInt()로 형변환해주면 int형으로 사용 가능함
 		
 		int num = 0;

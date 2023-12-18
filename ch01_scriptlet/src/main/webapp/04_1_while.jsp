@@ -10,7 +10,7 @@
 	<h1>while</h1>
 	<form action="04_2_while.jsp">
 		반복하고 싶은 문구 : <input name="msg" size="20"><br>
-		반복하고 싶은 횟수 : <input name="count"><br> 깃허브 확인
+		반복하고 싶은 횟수 : <input type="number" name="count"><br>
 		<input type="submit" value="서버로 전송">
 	</form>
 </body>

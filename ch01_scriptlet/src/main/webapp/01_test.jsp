@@ -7,7 +7,7 @@
 <title>01_test</title>
 </head>
 <body>
-	
+	 
 	<!-- 바깥은 html이므로 이 주석 -->
 	<!-- < % %> 안쪽은 프로그래밍 주석인 // /**/ 사용 -->
 	<%--
@@ -46,7 +46,7 @@
 	<!-- 인스턴스변수 생성자처럼 제일 먼저 불러오기 된다고..? -->
 	
 	메소드 : <%=me() %> -> (int me(){ return 12;}로 값 가져옴<br>
-	메소드 : <%=me2(3,5) %> ->int me2(int a, int b){ return a+b;}<br>
+	메소드 : <%=me2(3,5) %> ->int me2(int a, int b){ return a+b;}<br><br>
 	
 	< % : Scriptlet<br>
 	< %! : Declaration
