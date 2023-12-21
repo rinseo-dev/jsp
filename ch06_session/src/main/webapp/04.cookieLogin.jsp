@@ -9,10 +9,13 @@
 <body>
 <%
 // 04_3.cookieLoginOK.jsp에 있던 코드 가져옴/ 아래 식으로 id를 얻어올 수 있음
-	String id ="";
+	String id = "";
 	Cookie[] cookies = request.getCookies();
-	for(int i=0; i<cookies.length; i++){
+
+	
+	for(int i=0; i<cookies.length; i++){		
 		if(cookies[i].getName().equals("idKey")){ // cookies i번째의 이름이 idKey와 같으면
+			
 			id = cookies[i].getValue(); // cookies배열에 있는 i 번째 값에서 value를 가져와서 id에 넣음	
 		}
 	}
