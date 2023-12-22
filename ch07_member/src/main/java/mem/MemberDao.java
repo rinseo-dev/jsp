@@ -19,25 +19,44 @@ public class MemberDao {
 		}
 	}
 	
+	/*
+	 로그인, id체크, 회원가입 할때마다 pool을 통해서 con,pstmt, rs를 사용하므로
+	 사용이 끝날때마다 pool로 반납해줘야하기때문에 매번 freeConnectio()이 진행됨
+	 */
 	// 로그인 
 	public boolean loginMember(String id, String pwd) {
 		boolean flag = false;
 		try {
-			con = pool.getConnection();
+			con = pool.getConnection(); // connection()을 얻어와서 con에 넣음
 			sql = "select id from member where id=? and pwd=?";
-				// sql문 ?에는 loginMember메소드인 id, pwd가 들어감
+				// sql문 ?에는 loginMember메소드인 id, pwd가 들어감 / 사용자가 입력했음
 				// ?값이 맞으면 id만 가져오는 sql
+				// 물음표?를 사용할 때는 preparedStatement를 사용함
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, id);
-			pstmt.setString(2, pwd);
+			pstmt.setString(1, id); // index1번 = 첫번째 물음표
+			pstmt.setString(2, pwd); // index2번 = 두번째 물음표
 			rs = pstmt.executeQuery();
 			/*
 			rs.next(); // 여기선 반환값이 true, false임
 			//.next()는 시작 부분의 다음부터 값을 찾으므로 while로 돌려서 사용함
 			// 값이 없으면 false.
 			*/
+			/*
+			 id, pwd가 일치하면 rs에 id가 들어와있는 상황.
+			 rs.next()를 하면 id의 앞줄을 가리키던 게 rs안쪽의 id를 가리키게 됨
+			 rs.next() 값이 있으면 true, 없으면 false값을 반환함 
+			 */
 			flag = rs.next(); // next()에서 받은 true, false값을 바로 flag에넣음
 			// id가 들어오면 true, 아니면 false
+			/*
+			 여기서 rs.next();는 ResultSet 커서 위치에서 다음행으로 이동하고,
+			 해당 행에 값이 존재하면 true를 반환하고 행더이상 없으면(값이 없으면) false를 반환함
+			 
+			 rs.next()에서 반환된 값 true or false값을 flag에 넣어서 사용하게 됨
+			 
+			 이 코드에서는 select쿼리를 실행한 결과로 반환된 데이터의 각 행을 확인하기 위헤 next()가 사용됐고
+			 행 단위로 데이터를 처리할 수 있게 됨
+			 */
 		}catch(Exception e) {
 			e.printStackTrace();
 		}finally {
@@ -62,10 +81,15 @@ public class MemberDao {
 			 rs = pstmt.executeQuery();
 			 
 			 flag = rs.next();
+			 /*
+			 checkId 메서드에 주어진 id 값에 해당하는 회원이 DB에 존재하는지 판단하기 위해 사용됨
+			 만약 해당 id의 회원이 존재하면 flag는 true, 아니면 false
+			  */
 		}catch(Exception e) {
 			e.printStackTrace();
 		}finally {
 			pool.freeConnection(con, pstmt, rs);
+			// close라는 의미가 아니라 pool로 반환하는 형태
 		}
 		return flag;
 	}
@@ -87,6 +111,8 @@ public class MemberDao {
 			pstmt.setString(7, bean.getZipcode());
 			pstmt.setString(8, bean.getAddress());
 			pstmt.setString(9, bean.getDetailAddress());
+			
+			// hobby는 배열형태이므로 배열로 가져와야 함.
 			String hobby[] = bean.getHobby();
 			char hb[] = {'0','0','0','0','0'};
 			String lists[] = {"음악","여행","게임","영화","운동"};
@@ -117,6 +143,7 @@ public class MemberDao {
 			pstmt.setString(10, new String(hb));
 			pstmt.setString(11, bean.getJob());
 			
+			// select는 executeQuery / DB가 바뀌는 insert, delete, update는 executeUpdate사용
 			if(pstmt.executeUpdate() == 1) { // insert가 잘 되었으면 1반환, 안되었으면 0반환
 				flag = true;
 			}

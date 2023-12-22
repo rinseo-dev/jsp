@@ -12,15 +12,16 @@
 function findAddr(){
     new daum.Postcode({
         oncomplete: function(data) {
-        	let roadAddr = data.roadAddress;	// 도로명 주소
-            let jibunAddr = data.jibunAddress;	// 지번 주소
+        	let roadAddr = data.roadAddress;	// 도로명 주소를 가져옴
+            let jibunAddr = data.jibunAddress;	// 지번 주소를 가져옴
             // 사용자가 검색하면 도로명, 지번주소가 자동으로 들어오게 됨
             let extraAddr = ""; // 확장주소 - 동이름+빌딩이름
             
             document.getElementById('postcode').value = data.zonecode; // 우편번호
-            // 찾아온 id의 값에 data.zonecode를 넣어줄 것 - postcode에 zonecode가들어가게 됨
+            // 찾아온 id의 값postcode에 data.zonecode를 넣어줄 것 - postcode에 zonecode 값이 들어감
             
-            // 사용자가 도로명을 선택하면 도로명주소, 아니면 지번주소를 넣어줌
+            // 사용자가 도로명(R)을 선택하면 도로명주소, 아니면 지번주소(J)를 넣어줌
+            // API에서 이미 설정되어 있음
             if(data.userSelectedType =='R'){ // R = 도로명
             	if(roadAddr != ''){ //roadAddr에 값이 들어있다면
             		if(data.bname != ''){ // 동 이름이 있다면
@@ -33,10 +34,24 @@ function findAddr(){
             	// 삼항연산자로 주소 연결부분 extraAddr를 붙일지 말지
         		roadAddr += extraAddr != '' ? '('+ extraAddr +')' : '';
         		// 동이나 빌딩명이 있으면(동이름, 빌딩명)으로 뒤에 부착
+        		/*
+				 1. 만약 `extraAddr`이 빈 문자열(`''`)이 아니라면,
+				 `(extraAddr)`와 같은 형태의 문자열을 `roadAddr`에 추가합니다.
+				 2. 그렇지 않으면, `roadAddr`에 아무것도 추가하지 않습니다.
+
+				 이때 `+=` 연산자는 현재의 `roadAddr` 변수에 새로운 값을 추가하는 데 사용됩니다.
+				 	`roadAddr`에 이미 어떤 값이 있더라도 그 뒤에 새로운 값을 추가합니다.
+
+				 예를 들어, `roadAddr`이 "서울시 강남구"이고 `extraAddr`이 "역삼동"이라면,
+				 `roadAddr`은 "서울시 강남구(역삼동)"이 됩니다.
+				 반면에, 만약 `extraAddr`이 빈 문자열이라면
+				 `roadAddr`은 그대로 "서울시 강남구"가 유지됩니다.
+        		*/
+        		
         		
             	document.getElementById('addr').value = roadAddr;
         		// 도로명(동이름, 빌딩명)을 input에 넣는다
-            }else{
+            }else{ // else지만 (data.userSelectedType =='J')의미. 두가지라 else로 표현
             	if(jibunAddr != ''){ //roadAddr에 값이 들어있다면
             		if(data.buildingName != ''){ // 빌딩이름이 존재한다면
             			extraAddr += data.buildingName; // 빌딩이름을 붙여줌
@@ -47,6 +62,7 @@ function findAddr(){
             	document.getElementById('addr').value = jibunAddr;
             }
             document.getElementById('detailAddr').focus();
+            document.getElementById('detailAddr').placeholder="상세주소를 입력해주세요";
         }
     }).open();
 }
@@ -66,6 +82,9 @@ function findAddr(){
 	    <tr>
 	      <th colspan="3"><font size=5em>회원가입</font></th>
 	    </tr>
+	    <!-- 회원가입에 사용할 input name과 Bean파일의 필드 이름이 동일해야 자료가 연동됨
+	    	 memberPorc.jsp로 값이 넘어가면 <jsp:setProperty name="bean" property="*" />가
+	    	자동으로 setId, setXXX을 찾아서 받아온걸 넣어줌. -->
 	    <tr>
 	      <td>아이디</td>
 	      <td>
@@ -125,6 +144,7 @@ function findAddr(){
 	      <td>
 	          <input name="address" id="addr" size="60" readonly><br>
 	          <input name="detailAddress" id="detailAddr" placeholder="상세주소 넣기">
+	          <!-- focus()를 상세주소에 넣고, placeholder를 js에서 넣음 -->
 	      </td>
 	      <td>상세주소가 있으면 입력해주세요</td>
 	    </tr>

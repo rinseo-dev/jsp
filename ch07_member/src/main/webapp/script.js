@@ -13,6 +13,7 @@ function idCheck(id){
 	// 기존에 똑같은 아이디가 있는지 확인 필요
 	url = "idCheck.jsp?id="+id; // 내가 받은 아이디 값을 같이 넘겨줌
 	window.open(url,"IDCehck", "width=300, height=150");
+	// 중복검사 후 결과 값을 새 창으로 열어주는데, idCheck.jsp에 값을 가져가기 위해 "?id="+id가 덧붙은듯.
 }
 
 function inputCheck(){ // 필수입력값들 지정

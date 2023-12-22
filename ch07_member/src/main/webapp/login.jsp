@@ -2,6 +2,15 @@
     pageEncoding="UTF-8"%>
 <%
 	String id = (String)session.getAttribute("idKey");
+/*
+session.getAttribute("idKey"): 현재 세션에서 "idKey"라는 이름의 속성 값을 가져오는 메서드
+이 값은 Object 타입으로 반환됨
+
+(String):String으로 형변환. 세션에서 가져온 값이 어떤 타입이든 간에 String으로 형변환하여 id 변수에 저장 
+
+코드 실행 후에는 id변수에String 타입으로 저장되게 됨.
+세션을 통해 사용자의 정보를 유지하고 해당 정보를 JSP 페이지에서 사용
+*/
 %>
 <!DOCTYPE html>
 <html>
