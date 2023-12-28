@@ -32,8 +32,8 @@
 			// voteList라는 객체가 생성되었고 그 주소들이 vlist라는 변수에 들어가게 됨.??
 			int num = vlist.getNum();
 			String question = vlist.getQuestion();
-			String sdate = vlist.getSdate();
-			String edate = vlist.getEdate();
+			String sdate = vlist.getSdate().substring(0,10);
+			String edate = vlist.getEdate().substring(0,10);
 			
 			out.print("<tr><td>"+(alist.size()-i) + "</td>");
 			out.print(" <td><a href='voteList.jsp?num="+num+"'>"+question+"</a></td>");

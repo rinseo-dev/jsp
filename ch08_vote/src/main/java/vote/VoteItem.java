@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 public class VoteItem {
 	
+	//인스턴스변수
 	private int listnum;
 	private int itemnum;
 	private String[] item;// 여러값이 들어오므로 배열로 처리

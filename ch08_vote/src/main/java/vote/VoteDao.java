@@ -1,14 +1,13 @@
 package vote;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class VoteDao {
 	// Dao에는 DBConnectionPool을 사용하고 getInstance()를 가져옴
 	private DBConnectionMgr pool;
 	Connection con = null;
+	Statement stmt = null;
 	PreparedStatement pstmt = null;
 	ResultSet rs = null;
 	String sql = null; // 쿼리를 넣을 것이므로 변수 생성해줌.
@@ -22,7 +21,7 @@ public class VoteDao {
 		}
 	}
 	
-	// 설문 등록하기 ?? 깃허브
+	// 설문 등록하기
 	public boolean voteInsert(VoteList vlist, VoteItem vitem) {
 					// Bean으로 만든 2가지를 변수를 지정해서 가져옴.
 		boolean flag = false;
@@ -40,7 +39,7 @@ public class VoteDao {
 			//잘됐으면 1, 아니면 0
 			
 			int result2 = 0;
-			if(result==1) { // 잘 되었다면
+			if(result==1) { // 잘 되었다면 - update한게 1과 같으면 업데이트가 잘 된 상태
 				sql = "insert into voteitem values(seq_vote.currval, ?, ?, default)";
 				// vlist에 있는 num값이 listnum값으로 넘어옴..?
 				// 물음표?는 voteitem테이블에 itemnum이 됨.
@@ -60,7 +59,7 @@ public class VoteDao {
 				}
 			}
 			if(result2 == 1) { // 잘 된 경우
-				flag = true;
+				flag = true; // result, result2가 모두 잘 실행된 경우 flag가 true가 됨
 			}
 			
 		}catch(Exception e) {
@@ -77,8 +76,12 @@ public class VoteDao {
 		try {
 			con = pool.getConnection();
 			sql = "select * from votelist order by num desc";
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
+			/*
+			pstmt = con.prepareStatement();
+			rs = pstmt.executeQuery(sql);
+			*/
+			rs = con.createStatement().executeQuery(sql);
+			
 			while(rs.next()) {
 				VoteList vlist = new VoteList();
 				vlist.setNum(rs.getInt(1)); // index번호로 써줌
@@ -90,12 +93,12 @@ public class VoteDao {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}finally {
-			pool.freeConnection(con,pstmt,rs);
+			pool.freeConnection(con,stmt,rs);
 		}
 		return alist;
 	}
 	
-	// 설문 투표할 1개 질문 가져오기
+	// 설문 투표할 질문(1행) 가져오기
 	public VoteList getOneVote(int num) {
 		VoteList vlist = new VoteList();
 		try {
@@ -110,8 +113,8 @@ public class VoteDao {
 			}
 			// 물음표 안쓰는 이유가 뭐 오류가 발생한다고..? if문 true엔 없는데 else엔 있어서?
 			
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
+			rs = con.createStatement().executeQuery(sql);
+			
 			if(rs.next()) {
 				vlist.setQuestion(rs.getString("question")); // 받아온 값 중에서 question가져오기
 				vlist.setType(rs.getInt("type"));
@@ -121,7 +124,7 @@ public class VoteDao {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}finally {
-			pool.freeConnection(con,pstmt,rs);
+			pool.freeConnection(con,stmt,rs);
 		}
 		return vlist;
 	}
@@ -142,25 +145,24 @@ public class VoteDao {
 		try {
 			con = pool.getConnection();
 			if(num == 0) { // 사용자가 설문을 선택하지 않으면 num=0을 넘겨줌
-				sql = "select max(num) from votelist";
-				// 0이 넘어오면 가장 최신의 설문을 보여줄것
-				// num중에 가장 큰 값을 테이블에서 검색해옴
-				// votelist에서 가장 큰 num값을 가진걸 가져와서 아래 if문 num에 넘겨줌
-				pstmt = con.prepareStatement(sql);
-				rs = pstmt.executeQuery();
 				
-				// Max는 값이 1개니까 while문 필요 없음
-				if(rs.next()) {
-					num = rs.getInt(1); // 테이블 검색 결과 가장 큰 값을 num에 넣어줌
-					// 덮어쓰기로 하고 가장 큰 값이 들어올때만 뭐..?
-				}
+				num = getMaxNum(); // 아래 getMaxNum()메소드가 추가 생성됐음
 			}
+			
+			/*
 			sql = "select item from voteItem where listnum=?";
 			// 여기 물음표 값에는 사용자가 넣은 설문 값의 개수 중에 하나가 들어옴
 			// DB에서 listnum에 맞는 값만 가져오게 됨
+			preaparedStatement에서 Statement로 바뀌어서 이것 저것 다 사라짐
+			 */
+			sql = "select item from voteItem where listnum="+num;
+			rs = con.createStatement().executeQuery(sql);
+			/*
+			사라짐
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, num);
 			rs = pstmt.executeQuery(); // num값(번호)에 해당가는 executeQuery()값이 rs에 들어가게됨
+			*/
 			while(rs.next()) {
 				alist.add(rs.getString(1));
 				/*
@@ -181,8 +183,156 @@ public class VoteDao {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}finally {
-			
+			pool.freeConnection(con, stmt, rs);
 		}
 		return alist;
 	}
+	
+	// 투표로 count 증가
+	public boolean updateCount(int num, String[] itemnum) {
+		boolean flag = false;
+		
+		try {
+			con = pool.getConnection();
+			sql = "update VoteItem "
+				+ "set count = count+1 "
+				+ "where listnum=? and itemnum=?"; // +1로 카운트값 늘려줌
+			pstmt = con.prepareStatement(sql);
+			
+			if(num == 0) {
+				num = getMaxNum();
+				// if가 0일 때 num에는 가장 큰 max값읋 넣음
+			}
+			
+			// for문을 돌면서 num에 해당하는 값들을 돌려봄
+			// listnum과 itemnum이 둘 다 pk이므로 둘 값이 모두 체크 됐을 때 count가 올라감
+			for(int i=0; i<itemnum.length; i++) {
+				if(itemnum[i] == null || itemnum[i].equals("")) {
+					break;
+					// null이거나 값이 없을 때 break로 for문 빠져나오기
+				}
+				
+				pstmt.setInt(1, num);
+				pstmt.setInt(2, Integer.parseInt(itemnum[i]));
+				int result = pstmt.executeUpdate(); // update를 한 결과를 int형에 넣어줌
+				if(result > 0) {
+					flag = true;
+				}
+			}
+		
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			pool.freeConnection(con,pstmt);
+		}
+		
+		return flag;
+	}
+	
+	// listnum에 해당하는 전체 count얻어오기
+	public int sumCount(int num) {
+		int count = 0;
+		
+		try {
+			con = pool.getConnection();
+			sql = "select sum(count) from VoteItem where listnum=?";
+					// 테이블에서 count 합계를 가져옴
+			pstmt = con.prepareStatement(sql);
+			if(num == 0) {
+				pstmt.setInt(1, getMaxNum());
+			}else {
+				pstmt.setInt(1, num);
+			}
+			
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				count = rs.getInt(1);
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			pool.freeConnection(con,pstmt,rs);
+		}
+		return count;
+	}
+	
+	// listnum에 해당하는 각각의 item, count값 얻어오기
+	public ArrayList<VoteItem> getView(int num){
+		ArrayList<VoteItem> alist = new ArrayList<VoteItem>();
+		try {
+			con = pool.getConnection();
+			sql = "select item, count from VoteItem where listnum = ?";
+			// sql문을 실행하면 select한 결과로 item, count를 모아둔 테이블이 생성됨
+			pstmt = con.prepareStatement(sql);
+			
+			if(num == 0) {
+				pstmt.setInt(1, getMaxNum());
+			}else {
+				pstmt.setInt(1, num);
+			}
+			
+			rs = pstmt.executeQuery();
+			
+			
+			while(rs.next()) {
+				VoteItem vitem = new VoteItem();
+				// Bean에 item은 배열 count는 int로 되어 있음
+				/*
+				 vitem으로 빈 객체를 생성함.
+				 -------
+				 	0     count
+				   null   item
+				    0     itemnum
+				    0     listnum
+				 -------
+				 */
+				
+				String[] item = new String[1];
+				// 배열 한개만 있어도 값을 표현할 수 있음
+				// 1개짜리 item이라는 배열을 만듦
+				item[0] = rs.getString(1); // 1번은 컬럼의 인덱스번호로 item을 가리킴
+				// item[0]번인 배열에 rs.getString(1)값을 넣음.
+				vitem.setItem(item);
+				vitem.setCount(rs.getInt(2)); // 2번은 count
+				// VoteItem부터 여기까지는 객체를 만들었고 아래 add로 넣어줌.
+				alist.add(vitem);	
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			pool.freeConnection(con,pstmt,rs);
+		}
+		return alist; // 주소가 저장되어 있는 alist만 가져감
+		// get(0)하면 alist에 있는 0번 인덱스 값을 가져오게 되는 것
+	}
+	
+	
+	// VoteList중에서 num이 가장 큰 값 얻어오기
+	public int getMaxNum() { // getMaxNum()메소드를 사용하면 가장 큰 값을 가져올 수 있게 됨
+		int maxNum = 0;
+		
+		try {
+			con = pool.getConnection();
+			sql = "select max(num) from votelist"; // maxNum을 구하기 위한 sql
+			// sql문에서는 가장 큰 num값 하나가 들어와있는 상태
+			/*
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(sql);
+			이 두 줄을 아래 한줄로 합침 */
+			rs = con.createStatement().executeQuery(sql);
+			if(rs.next()) { // rs에 들어와있는 값이 true이면. 값이 있다면
+				maxNum = rs.getInt(1); // DB 인덱스번호는 1번부터이므로 첫 컬럼을 지칭함.
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			pool.freeConnection(con,stmt,rs);
+		}
+		
+		return maxNum;
+	}
+	
 }
