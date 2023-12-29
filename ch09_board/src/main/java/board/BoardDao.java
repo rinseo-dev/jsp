@@ -1,6 +1,10 @@
 package board;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 
 public class BoardDao {
 	/* 첫번째 작성 */
@@ -179,6 +183,7 @@ public class BoardDao {
 		try {
 			con = pool.getConnection();
 			sql = "update board set pos = pos+1 where ref=? and pos > ?";
+			// sql 구문 자체가 들어온 두번째 ?(pos)값이 기존 pos보다 작은지를 확인 해야 함.
 			/*
 			 답글은 부모가 갖고 있는 글 보다 pos가 큼.
 			 ref가 12, pos가 0인 원 글에 답글을 달면
@@ -196,20 +201,6 @@ public class BoardDao {
 		}
 		
 	}
-//	public void replyUpBoard(int ref, int pos) {
-//		try {
-//			con = pool.getConnection();
-//			sql = "update board set pos = pos+1 where ref=? and pos > ?";
-//			pstmt = con.prepareStatement(sql);
-//			pstmt.setInt(1, ref);
-//			pstmt.setInt(2, pos);
-//			pstmt.executeUpdate();
-//		} catch(Exception e) {
-//			e.printStackTrace();
-//		} finally {
-//			pool.freeConnection(con, pstmt);
-//		}
-//	}
 	
 	/* 여덟번째 작성*/
 	// 게시물 답글 등록
@@ -243,6 +234,92 @@ public class BoardDao {
 			pool.freeConnection(con);
 		}
 	}		
+	
+	
+	/* 아홉번째 */
+	// 게시물의 총 개수
+	public int getTotalCount(String keyField, String keyWord) {
+		int totalCount = 0;
+		try {
+			con = pool.getConnection();
+			
+			// keyField는 선택을 안해도 이름이 들어옴
+			if(keyWord.equals("null") || keyWord.equals("")){
+				sql = "select count(num) from board";
+				pstmt = con.prepareStatement(sql);
+			}else {
+				sql = "select count(num) from board where " + keyField + " LIKE ?";
+				// keyField 앞 뒤로 띄어쓰기 필요함. 붙여서 쓰면 sql구문이 한 단어로 인식함
+				// %A% 를 사용하면 내용에 A가 포함되는 모든 것을 찾을 수 있음
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, "%"+keyWord+"%"); // %keyWord% 여야하므로 띄어쓰기X
+			}
+			
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				totalCount = rs.getInt(1);
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			pool.freeConnection(con,pstmt,rs);
+		}
+		return totalCount;
+	}
+	
+	/* 열번째 */
+	// 전체 게시글 또는 검색한 게시글 리스트 목록
+	// -> 여러 값이 넘어오므로 ArrayList로
+	public ArrayList<Board> getBoardList(String keyField, String keyWord, int start, int end) {
+		ArrayList<Board> alist = new ArrayList<Board>();
+		try {
+			con = pool.getConnection();
+			if(keyWord.equals("null") || keyWord.equals("")) {
+				/*
+				sql = "select * from board "
+					+ "where ROWNUM >= ? AND ROWNUM <= ? " // 1?:start, 2?:end
+					+ "order by ref desc, pos ";
+				 */
+				// ROWNUM으로 가져와서 정렬해야 하는데 order by가 뒤에서 실행되므로 서브쿼리 필요
+				// select * from board order by ref desc, pos; 이걸로 정렬을 먼저 하고
+				// where ROWNUN >= ? AND ROWNUM <= ? 를 해줘야 함
+				sql = "select * from(select * from board order by ref desc, pos) "
+					+ "where ROWNUM >= ? AND ROWNUM <= ?";
+				pstmt = con.prepareStatement(sql);
+				pstmt.setInt(1, start);
+				pstmt.setInt(2, end);
+			}else {
+				sql = "select * from(select * from board order by ref desc, pos) "
+					+ "where ROWNUM >= ? AND ROWNUM <= ? AND " + keyField + " LIKE ?";
+				
+				pstmt = con.prepareStatement(sql);
+				pstmt.setInt(1, start);
+				pstmt.setInt(2, end);
+				pstmt.setString(3,"%"+keyWord+"%");
+			}
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				Board board = new Board();
+				board.setNum(rs.getInt("num"));
+				board.setName(rs.getString("name"));
+				board.setSubject(rs.getString("subject"));
+				board.setContent(rs.getString("content"));
+				board.setPos(rs.getInt("pos"));
+				board.setRef(rs.getInt("ref"));
+				board.setDepth(rs.getInt("depth"));
+				board.setRegdate(rs.getString("regdate"));
+				board.setCount(rs.getInt("count"));
+				alist.add(board);
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			pool.freeConnection(con);
+		}
+		return alist;
+	}
+	
 	
 	/* 기본 형태 */
 	//
