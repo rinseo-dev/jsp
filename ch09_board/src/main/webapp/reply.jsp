@@ -2,6 +2,8 @@
     pageEncoding="UTF-8"%>
 <%@ page import="board.*" %> <!-- board패키지에 있는 모든것 -->
 <%
+	String nowPage = request.getParameter("nowPage");
+
 	/*
 	read에서 답변에 대한 num값을 받아오던 부분이 사라졌으므로 여기서도 지움
 	int num = Integer.parseInt(request.getParameter("num"));
@@ -52,6 +54,8 @@
     </table>
     <!-- 나의 정보 : 아이피를 넘겨줌 -->
     <input type="hidden" name="ip" value="<%=request.getRemoteAddr()%>">
+    <!-- 상세 읽기에서 넘어온 정보 -->
+    <input type="hidden" name="nowPage" value="<%=nowPage %>">
     
     <!-- 상위 부모들의 정보 : session에서 가져오면 됨-->
     <input type="hidden" name="ref" value="<%=board.getRef() %>">

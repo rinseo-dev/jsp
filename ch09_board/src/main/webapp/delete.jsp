@@ -6,6 +6,8 @@
 	int num = Integer.parseInt(request.getParameter("num"));
 	//Board board = (Board)session.getAttribute("bean");
 	
+	String nowPage = request.getParameter("nowPage"); // page번호 받음
+	
 	// int pass = Integer.parseInt(request.getParameter("pass"));
 	
 	//처음 들어 왔을때는 실행되지 않고 null과 같지 않을때만 실행됨
@@ -17,7 +19,7 @@
 		if(inputPass.equals(dbPass)){ // 비밀번호가 맞는지
 			boolean result = bDao.deleteBoard(num);
 			if(result){
-				response.sendRedirect("list.jsp");
+				response.sendRedirect("list.jsp?nowPage="+nowPage); // nowPage값 씀
 			}else{
 %>
 			<script>
@@ -63,6 +65,7 @@
 			</tr>
 		</table>
 		<input type="hidden" name="num" value="<%=num %>">
+		<input type="hidden" name="nowPage" value="<%=nowPage %>"> <!-- hidden으로 넘겨줌 -->
 	</form>
 </body>
 </html>

@@ -5,7 +5,7 @@
 <%
 	// 페이징 처리 변수들
 	int totalRecord = 0; // 전체 레코드 수(DB 행의 수)
-	int numPerPage = 5; // 페이지당 보여줄 레코드 수
+	int numPerPage = 2; // 페이지당 보여줄 레코드 수
 	int pagePerBlock = 5; // 블록당 페이지수 [1][2][3][4][5] -> 하단 페이징
 	
 	int totalPage = 0; // 전체 페이지 수
@@ -89,7 +89,7 @@
 	
 	function pageing(page){
 		// readFrm을 만들어서 값을 넘겨받는..
-		document.readFrm.nowPage.value = page; // nowPage 값에 현재 페이지를 넘겨줌
+		document.readFrm.nowPage.value=page; // nowPage 값에 현재 페이지를 넘겨줌
 		document.readFrm.submit();
 	}
 	
@@ -212,7 +212,7 @@
 			<!--  페이징 처리 끝 -->
 			<td colspan="2">
 				<a href="post.jsp">[글쓰기]</a>
-				<a href="javascript:list();">[처음으로]</a>
+				<a href="javascipt:list();">[처음으로]</a>
 			</td>
 		</tr>
 		<tr>
@@ -232,16 +232,16 @@
 					<input type="submit" value="찾기">
 					
 					<!-- 현재페이지의 정보를 넘겨줘야 다시 돌아올 수 있음(?) -->
-					<!-- <input type="hidden" name="nowPage" value="1"> 남들은 이거 있어도 됨-->
+					<!-- <input type="hidden" name="nowPage" value="1"> -->
 				</td>
 			</tr>
 		</table>
 	</form>
 	
 	<!-- [처음으로] 누르면 화면 reload -->
-	<form method="get" name="listFrm">
+	<form method="post" name="listFrm">
 		<input type="hidden" name="reload" value="true">
-		<!-- <input type="hidden" name="nowPage" value="1"> -->
+		<input type="hidden" name="nowPage" value="1">
 	</form>
 
 	<form method="post" name="readFrm">

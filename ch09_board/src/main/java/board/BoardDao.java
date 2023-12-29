@@ -284,19 +284,34 @@ public class BoardDao {
 				// ROWNUM으로 가져와서 정렬해야 하는데 order by가 뒤에서 실행되므로 서브쿼리 필요
 				// select * from board order by ref desc, pos; 이걸로 정렬을 먼저 하고
 				// where ROWNUN >= ? AND ROWNUM <= ? 를 해줘야 함
+				/*
 				sql = "select * from(select * from board order by ref desc, pos) "
-					+ "where ROWNUM >= ? AND ROWNUM <= ?";
+					+ "where ROWNUM >= ? AND ROWNUM <= ?";*/
+				sql = "select * "
+					+ "from (select ROWNUM RNUM, BT1.* "
+					+ "      from (select * from board order by ref desc, pos) BT1) "
+					+ "where RNUM BETWEEN ? AND ?"; 
 				pstmt = con.prepareStatement(sql);
 				pstmt.setInt(1, start);
 				pstmt.setInt(2, end);
 			}else {
+				/*주석은 어제 해본 방법
 				sql = "select * from(select * from board order by ref desc, pos) "
-					+ "where ROWNUM >= ? AND ROWNUM <= ? AND " + keyField + " LIKE ?";
+					+ "where ROWNUM >= ? AND ROWNUM <= ? AND " + keyField + " LIKE ?"; */
+				sql ="select * "
+					+ "from (select ROWNUM as RNUM, BT1.* "
+					+ "      from (select * from board order by ref desc, pos) BT1 "
+					+ "			   where "+keyField+" like ?) "
+					+ "where RNUM BETWEEN ? AND ?";
 				
 				pstmt = con.prepareStatement(sql);
+				/*주석은 어제 해본 방법
 				pstmt.setInt(1, start);
 				pstmt.setInt(2, end);
-				pstmt.setString(3,"%"+keyWord+"%");
+				pstmt.setString(3,"%"+keyWord+"%");*/
+				pstmt.setString(1, "%"+keyWord+"%");
+				pstmt.setInt(2, start);
+				pstmt.setInt(3,end);
 			}
 			rs = pstmt.executeQuery();
 			while(rs.next()) {

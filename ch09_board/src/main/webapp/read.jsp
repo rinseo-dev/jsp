@@ -3,7 +3,12 @@
 <%@ page import="board.*" %>
 <jsp:useBean id="bDao" class="board.BoardDao" />
 <%
-	int num = 17; // 명시적으로 1번 넣어두고 list.jsp 수정 후 바꿀 것
+	//int num = 17; // 명시적으로 1번 넣어두고 list.jsp 수정 후 바꿀 것
+	int num = Integer.parseInt(request.getParameter("num"));
+	String nowPage = request.getParameter("nowPage");
+	String keyField = request.getParameter("keyField");
+	String keyWord = request.getParameter("keyWord");
+	
 	bDao.upCount(num); // 글 읽기를 했을 때 조회수를 증가시켜줄 것
 	
 	// DB에서 검색해서 num을 가져옴 / num을 넘겨줘야 가져올 수 있음
@@ -44,14 +49,31 @@
 			<td colspan="4" align="center">
 			<hr>
 			[
-			<a href="list.jsp">리스트</a>|
-			<a href="update.jsp?num=<%=num%>">수  정</a>| <!-- update에 num을 넘겨줌 -->
+			<a href="javascript:list();">리스트</a>|
+			<a href="update.jsp?num=<%=num%>&nowPage=<%=nowPage%>">수  정</a>| <!-- update에 num을 넘겨줌 -->
 			<%-- <a href="reply.jsp?num=<%=num%>">답  변</a>| 답변 수정하면서 여기서 num빼줌--%>
-			<a href="reply.jsp">답  변</a>|
-			<a href="delete.jsp?num=<%=num%>">삭  제</a>|
+			<a href="reply.jsp?nowPage=<%=nowPage%>">답  변</a>|
+			<a href="delete.jsp?num=<%=num%>&nowPage=<%=nowPage%>">삭  제</a>|
 			]
 			</td>
 		</tr>
 	</table>
+	<form name="listFrm" method="post" action="list.jsp">
+		<input type="hidden" name="nowPage" value="<%=nowPage %>">
+		<%
+			if(! (keyWord == null || keyWord.equals("")) ){
+			%>
+				<input type="hidden" name="keyField" value="<%=keyField%>">
+				<input type="hidden" name="keyWord" value="<%=keyWord%>">
+			<%
+			}
+		%>
+	</form>
+	<script>
+	//<a href="javascript:list();">리스트</a>에 대해서 강제로 submit해줌
+	function list(){
+		document.listFrm.submit();
+	}
+	</script>
 </body>
 </html>

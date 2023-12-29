@@ -35,9 +35,10 @@ public class BoardUpdateServlet extends HttpServlet {
 		/*String dbPass = dbBoard.getPass(); // DB에 있는 pass값을 가져옴
 		// 사용자가 입력한 inputPass와 비교해야 하므로 dbPass에 넣어줌*/
 		
+		String nowPage = request.getParameter("nowPage"); // 페이지값 가져오게 추가
 		if(inputPass.equals(dbBoard.getPass())) { // 사용자가 가져온 값을 if문 안에 바로 넣어줬음.
 			new BoardDao().updateBoard(upBoard); // BoardDao() 값을 넘겨주려는게 아니므로 바로 생성만
-			response.sendRedirect("read.jsp?num="+num);
+			response.sendRedirect("read.jsp?num="+num+"&nowPage="+nowPage);
 			// Integer.parseInt(request.getParameter("num"))이 필요해서 num변수 만들어서 넣어줌
 		}else {
 			out.print("<script>");

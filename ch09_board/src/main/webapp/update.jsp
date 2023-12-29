@@ -16,7 +16,7 @@
 	Board board = (Board)session.getAttribute("bean");
 	//session.setAttribute("bean",board); read에서 이렇게 bean을 통째로 받아옴
 	
-	
+	String nowPage = request.getParameter("nowPage");
 	
 %>
 
@@ -65,6 +65,7 @@
       </tr>
     </table>
     <input type="hidden" name="num" value="<%=num %>">
+    <input type="hidden" name="nowPage" value="<%=nowPage %>">
   </form>
 </body>
 </html>

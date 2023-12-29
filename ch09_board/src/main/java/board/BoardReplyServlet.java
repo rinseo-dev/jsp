@@ -28,7 +28,12 @@ public class BoardReplyServlet extends HttpServlet {
 			//ref에 있는 값을 1개씩 증가 시킬것
 			bDao.replyBoard(board);
 			
-			response.sendRedirect("list.jsp");
+			response.sendRedirect("list.jsp?nowPage="+request.getParameter("nowPage"));
+			/*
+			 2번 페이지에 있던 글을 보고 나서 목록으로 돌아가면 2번 페이지를 보여줘야 함.
+			 sendRedirect("list.jsp")로 첫번째 페이지로 돌아가게 되므로
+			 사용자가 보던 페이지를 그대로 보여주고 싶다면 nowPage에 담긴 값을 사용하면 됨
+			 */
 	}
 
 }
