@@ -20,7 +20,7 @@
 			boolean result = bDao.deleteBoard(num);
 			if(result){
 				// response.sendRedirect("list.jsp?nowPage="+nowPage); // nowPage값 씀
-				response.sendRedirect("list.jsp"); // 여기서도 nowPage날림
+				response.sendRedirect("list.jsp?nowPage="+nowPage); // 여기서도 nowPage날림
 			}else{
 %>
 			<script>

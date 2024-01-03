@@ -28,8 +28,9 @@ public class BoardReplyServlet extends HttpServlet {
 			//ref에 있는 값을 1개씩 증가 시킬것
 			bDao.replyBoard(board);
 			
-//			response.sendRedirect("list.jsp?nowPage="+request.getParameter("nowPage"));
-			response.sendRedirect("list.jsp?"); // nowPage하니까 고정돼서 치움
+			String nowPage = request.getParameter("nowPage");
+			response.sendRedirect("list.jsp?nowPage="+nowPage);
+//			response.sendRedirect("list.jsp?"); // nowPage하니까 고정돼서 치움 / get으로 바꿈
 			/*
 			 2번 페이지에 있던 글을 보고 나서 목록으로 돌아가면 2번 페이지를 보여줘야 함.
 			 sendRedirect("list.jsp")로 첫번째 페이지로 돌아가게 되므로

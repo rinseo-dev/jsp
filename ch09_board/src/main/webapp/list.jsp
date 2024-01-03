@@ -244,7 +244,10 @@
 		<!-- <input type="hidden" name="nowPage" value="1"> -->
 	</form>
 
-	<form method="post" name="readFrm">
+	<form method="get" name="readFrm">
+	<!-- post로 넘기면 header로 들어가서 계속 갱신이 되어야 함.
+		하지만 값이 바뀌지 않고 고정되기 때문에 get방식으로 변경함.
+		get으로 보내면 방식이 갱신이 됨. -->
 		<input type="hidden" name="num">
 		<input type="hidden" name="nowPage" value="<%=nowPage %>">
 		<input type="hidden" name="keyField" value="<%=keyField %>">
