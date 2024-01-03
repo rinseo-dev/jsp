@@ -59,4 +59,24 @@
     <servlet-name>AjaxController4</servlet-name>
     <url-pattern>/ajaxPro1/ajax4.do</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AjaxReplyList</display-name>
+    <servlet-name>AjaxReplyList</servlet-name>
+    <servlet-class>ajaxReply.AjaxReplyList</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AjaxReplyList</servlet-name>
+    <url-pattern>/ajaxReply/rlist.bo</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AjaxReplyInsert</display-name>
+    <servlet-name>AjaxReplyInsert</servlet-name>
+    <servlet-class>ajaxReply.AjaxReplyInsert</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AjaxReplyInsert</servlet-name>
+    <url-pattern>/ajaxReply/rinsert.bo</url-pattern>
+  </servlet-mapping>
 </web-app>
