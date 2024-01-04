@@ -1,4 +1,6 @@
-package ajaxPro1;
+package mem;
+
+import java.util.Arrays;
 
 public class Member {
 	private String id;
@@ -123,9 +125,12 @@ public class Member {
 	}
 
 	
+	// toString 생성
 	@Override
 	public String toString() {
-		return "Member [id=" + id + ", name=" + name + ", gender=" + gender + ", email=" + email + "]";
+		return "Member [id=" + id + ", pwd=" + pwd + ", name=" + name + ", gender=" + gender + ", birthday=" + birthday
+				+ ", email=" + email + ", zipcode=" + zipcode + ", address=" + address + ", detailAddress="
+				+ detailAddress + ", hobby=" + Arrays.toString(hobby) + ", job=" + job + "]";
 	}
 
 	

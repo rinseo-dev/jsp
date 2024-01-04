@@ -13,6 +13,14 @@
 	<%
 		String classRoom = (String)request.getAttribute("classRoom");
 	// 문자열로 출력하려고 String classRoom을 만들었는데, request로 받아오면 Object객체 타입이라 형변환
+	
+	/*
+		<form>
+			<input name="id">
+		</form>
+		파라미터 => id="사용자가 입력한 값"
+		파라미터로 넘겼을 때는 키:값 으로 받는게 아니라 String으로 받음
+	*/
 		
 		Person Student = (Person)request.getAttribute("student");
 		/* Student는 Person타입임.
@@ -52,19 +60,26 @@
 	<p>
 	<!-- 가장 작은 scope부터 키값을 찾아서 비교 후 값을 가져옴.
 		pageContext -> reuqestContext -> sessionScope -> application 순서로 확인
+		그 중에 키값이 있는 scope에서 값을 가져옴
 		
 		필드는 private이므로, 내부적으로 getterMathod를 호출해서 사용하는 것과 같음
 		-->
 		학원명 : ${academy }<br>
 		강의장 : ${classRoom }<br>
-		강사 : ${teacher.name }, ${teacher.age }, ${teacher.gender }<br><br>
+		강사 : ${teacher.name }, ${teacher.age }, ${teacher.gender }<br><br>	
+		<!-- 필드명만 써주면 필드에 해당하는 getter method()를 가져와서 출력해줌 -->
 	</p>
+
 	
 		수강생정보
-		<ul>
+		<ul><!-- 
 			<li>이름: ${student.getName() }</li>
 			<li>나이: ${student.getAge() }</li>
 			<li>성별: ${student.getGender() }</li>
+			 -->
+			<li>이름: ${student.name }</li>
+			<li>나이: ${student.age }</li>
+			<li>성별: ${student.gender }</li>
 		</ul>
 	
 	<h3>3. scope의 키값이 동일한 경우</h3>

@@ -107,7 +107,6 @@
 	// 키:값 형태로 넘어가고 있음
 		$(()=>{
 			$("#btn1").click(function(){
-				
 				/*
 				<form action="ajax1.do" method="get">
 					<input id="input1">
@@ -118,6 +117,7 @@
 				$.ajax({ // AjaxController1.servlet과 연결됨
 					url:"ajax1.do",
 					data:{input:$("#input1").val()}, // 사용자가 넣은 값
+					// AjaxController1에서 str로 data에 'input' 값을 가져옴
 					type:"get", // 안써도 get방식
 					
 			// success, error, complete는 java의 try-catch-finally와 같음

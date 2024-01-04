@@ -1,8 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
 	request.setCharacterEncoding("UTF-8");
-	String id = (String)session.getAttribute("idKey");
+	/* String id = (String)session.getAttribute("idKey"); 필요없음
+	   ${idKey}를 하면 page->application 까지 훑어서 있는 값 가져옴 */
 	
 %>
 <!DOCTYPE html>
@@ -47,17 +49,41 @@
       <ul>
         <li><a href="vote/voteList.jsp">투표하기</a></li>
         <li><a href="board/list.jsp">게시판</a></li>
-       <% if(id==null){ %>
+		<!--
+			ch10_homepage를 jstl버전으로 바꿈
+			session.setAttribute("idKey",id);에서 id값을 idKey로 가져옴
+        -->
+        
+        <!-- test="${empty idKey}" -> idKey == null도 가능 -->
+       <c:choose>
+         <c:when test="${empty idKey}">
+         	<li><a href="member/login.jsp">로그인</a></li>
+         </c:when>
+         <c:otherwise>
+         	<li><a href="member/logout.jsp">로그아웃</a><li>
+         </c:otherwise>
+       </c:choose>
+       <!--
+       < % if(id==null){ % >
         <li><a href="member/login.jsp">로그인</a></li>
-       <%}else{ %>
+       < %}else{ % >
         <li><a href="member/logout.jsp">로그아웃</a><li>
-       <%} %>
+       < %} % >
+       -->
       </ul>
     </nav>
     <div id="login">
-    	<%if(id != null) {%>
-    	<p>[<%=id %>님 로그인 상태]</p>
-    	<%} %>
+    <!-- else가 없는 if 한개짜리라 if로 씀
+    	test="${!empty idKey} or ${not empty idKey}도 가능
+    -->
+    	<c:if test="${idKey != null }">
+    		<p>[${idKey }님 로그인 상태]</p>
+    	</c:if>
+    <!-- 
+    	< %if(id != null) {%>
+    	<p>[< %=id %>님 로그인 상태]</p>
+    	< %} %>
+    -->
     </div>
   </header>
   <section id="imgslide">
@@ -67,39 +93,7 @@
       <img src="resources/img/P.png" alt="4번">
   </section>
   
-  <script>
- 	/*  $(()=>{
- 		let x = $('#imgslide>div img');
- 		  let count = 3;
- 		  setInterval(function() {
- 			 count = (count + 1) % x.length;
-
- 		    x.fadeOut();
- 		    x.eq(count).fadeIn();
- 		  }, 500);
-    }); */
-    
-    /*
-    $(document).ready(function() {
-        let currentImageIndex = 0;
-        const images = $('#imgslide img');
-
-        function showNextImage() {
-          images.eq(currentImageIndex).fadeOut(500); // 1초 동안 fadeOut 효과
-          currentImageIndex = (currentImageIndex + 1) % images.length;
-          images.eq(currentImageIndex).fadeIn(500); // 1초 동안 fadeIn 효과
-        }
-
-        // 이미지를 3초마다 교체하도록 설정
-        const intervalId = setInterval(showNextImage, 500);
-
-        // 페이지를 벗어날 때 interval 정리
-        $(window).on('beforeunload', function() {
-          clearInterval(intervalId);
-        });
-      });
-    */
-    
+  <script> 
     $(()=>{
     	let x = $('#imgslide>img');
     	  let count = 4;
@@ -111,10 +105,9 @@
     	    } else {
     	      x.eq(count).fadeOut();
     	    }
-    	  }, 500);
+    	  }, 1000);
     })
-    
-    
+ 
   </script>
 </body>
 </html>
