@@ -124,6 +124,11 @@
 	<pre>
 		- JAVA의 if-else, if-else if문과 비슷한 역할을 하는 태그
 		- 각 조건들을 c:choose의 하위요소로 c:when(if, else if의 역할)을 통해 작성 c:otherwise(else)의 역할
+	
+	if{}		=> when
+	else if{}	=> when (else if도 if처럼 씀)
+	else{}		=> otherwise
+	
 	</pre>
 	
 	<c:choose>
@@ -166,6 +171,7 @@
 	 <br><br>
 	 
 	 &lt;\${i}&gt;태그안에서도 적용가능&lt;/\${i}&gt;
+	 <!-- step을 안써서 1씩 증가  -->
 	 <c:forEach var="i" begin="1" end="6">
 	 	<h${i}>태그안에서도 적용가능</h${i}>
 	 </c:forEach>
@@ -214,7 +220,9 @@
 			if->when, else->otherwise
 			items="순차적으로 접근하고자 하는 객체(배열|컬렉션)"
 			-->
-		
+		<!-- ArrayList에 있는 p를 하나씩 꺼내옴
+			getterMethod를 쓰지 않고 필드 이름만 써줘도 사용가능.
+			알아서 처리해준다고 ㅇㅇ  -->
 		<c:choose>
 			<c:when test="${empty pList }">
 				<tr>
@@ -265,7 +273,8 @@
 					<tr>
 					<!-- varStatus속성은 2가지
 						> index : 0부터 시작
-						> count : 1부터 시작 -->
+						> count : 1부터 시작 
+						  **향상된 for문 일때만 가능 -->
 						<td>${status.count }</td>
 						<td>${p.name }</td>
 						<td>${p.age }</td>
@@ -285,6 +294,8 @@
 		- JAVA의 split("구분자") 비슷한 기능
 	</pre>
 	
+	<!-- set으로 변수 만들었음. value에 ','만 구분돼있어야 순수 배열로 볼 수 있는데
+		 굳이 나누자면 4개 배열이 되고, 지금은 split로 나누어서 사용할 값으로 봄 ㄴ-->
 	<c:set var="device" value="컴퓨터,핸드폰,TV,에어컨/냉장고.세탁기" />
 	
 	<!-- delims=",./"구분자 ,./로 value값을 나눔. 모든 단어가 하나씩 떨어지는 결과값  -->
@@ -308,7 +319,10 @@
 		<c:param name="num" value="2" />
 		<c:param name="nowPage" value="3"/>
 	</c:url>
-	
+	<!-- name키 value값 형태로 넣음
+		 'bo'로 가게끔 되어 있고, list.do를 타고 가게 됨
+		 list.do로 가는 파일은 만들어놓은게 없으므로 당연히 404에러가 나지만,
+		 주소창에 있는 get방식의 주소넘기기를 봐야함. -->
 	<a href="${bo }">c:url을 이용한 방식</a>
 	<!--
 		기존방식 : views/2_customAction/list.jsp?num=2&nowPage=3

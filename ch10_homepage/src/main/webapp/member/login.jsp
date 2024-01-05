@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 
 <%
-	String id = (String)session.getAttribute("idKey");
+	String id = (String)session.getAttribute("idKey"); // idKey는 loginProc에서 옴
 /*
 session.getAttribute("idKey"): 현재 세션에서 "idKey"라는 이름의 속성 값을 가져오는 메서드
 이 값은 Object 타입으로 반환됨

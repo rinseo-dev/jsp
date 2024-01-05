@@ -20,6 +20,7 @@ session.getAttribute("idKey"): 현재 세션에서 "idKey"라는 이름의 속�
 <title>login</title>
 </head>
 <body>
+<!-- idKey값은 loginProc에서 옴 -->
 <c:choose>
 	<c:when test="${!empty idKey}">
 		<b>${idKey }</b>님 환영합니다.
