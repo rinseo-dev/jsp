@@ -23,5 +23,14 @@
 	<h4>1. JSTL Core Library</h4>
 	<p>변수와 조건문, 반복문 등의 로직과 관련된 문법을 제공</p>
 	<a href="01.core.jsp">core library</a>
+
+	<h4>2. JSTL Formatting Library</h4>
+	<p>숫자, 날짜, 시간 데이터의 출력 형식을 지정할 때 사용하는 문법</p>
+	<a href="02.fmt.jsp">fmt library</a>
+
+	<h4>3. JSTL Functions Library</h4>
+	<p>EL안에서 사용할 수 있는 함수를 제공</p>
+	<a href="03.fn.jsp">functions library</a>
+
 </body>
 </html>
