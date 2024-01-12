@@ -63,10 +63,10 @@ public class ReplyDao {
 				//Reply(int no, String content, String name, String regdate)
 				
 				alist.add(new Reply(rs.getInt(1),
-									   rs.getString(2),
-									   rs.getInt(3), // 4개짜리 sql문에선 이게 필요 없음
-									   rs.getString(4),
-									   rs.getString(5)));
+									  rs.getString(2),
+									  rs.getInt(3), // 4개짜리 sql문에선 이게 필요 없음
+									  rs.getString(4),
+									  rs.getString(5)));
 			}
 			
 		}catch(Exception e) {
